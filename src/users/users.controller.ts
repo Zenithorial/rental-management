@@ -19,24 +19,21 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   // GET /users
-  //@Get()
-  //findAll(): Promise<User[]> {
-  //return this.usersService.findAll();
-  //}
+  @Get()
+  findAll() {
+    return this.usersService.findAll();
+  }
 
   // GET /users/:id
   @Get(':id')
-  findUserId(@Param('id', ParseIntPipe) id: number) {
-    return { id };
+  findUser(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.findUser(id);
   }
 
   // POST /users
   @Post()
   createUser(@Body() createUserDto: CreateUserDto) {
-    return {
-      name: createUserDto.name,
-      role: createUserDto.role,
-    };
+    return this.usersService.createUser(createUserDto);
   }
 
   // PUT /users/:id
@@ -45,14 +42,13 @@ export class UsersController {
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    return {
-      id,
-      ...updateUserDto,
-    };
+    return this.usersService.updateUser(id, updateUserDto);
   }
 
   // DELETE /users/:id
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  removeUser(@Param('id', ParseIntPipe) id: number) {}
+  removeUser(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.deleteUser(id);
+  }
 }
