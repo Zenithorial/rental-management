@@ -115,11 +115,23 @@ export class PropertiesService {
     }
   }
 
-  async deleteProperty(propertyId: number, userRole: string) {
-    if (userRole === 'ADMIN') {
-      return this.prisma.properties.delete({
-        where: { id: propertyId },
-      });
+  async deleteProperty(propertyId: number, userId: number, userRole: string) {
+    const property = await this.prisma.properties.findUnique({
+      where: { id: propertyId },
+    });
+
+    if (!property) {
+      throw new NotFoundException(`Property ID ${propertyId} not found!`);
     }
+
+    if (userRole !== 'ADMIN' && property.ownerId !== userId) {
+      throw new ForbiddenException(
+        'You do not have permission to delete this property',
+      );
+    }
+
+    return this.prisma.properties.delete({
+      where: { id: propertyId },
+    });
   }
 }

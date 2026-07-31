@@ -28,15 +28,17 @@ model properties {
 }
 
 model units {
-  unitNo        Int       @id   //Unit 101
+  id            Int         @id @default(autoincrement())
+  unitNumber    String          //Unit 101, Unit 102A, Unit B-12
   propertyId    Int             //123242342135234
   monthlyRent   Int             //1,000,000,000,00,000,0,0,0,0,0,0,0
-  status        Boolean
+  status        String          //"AVAILABLE", "OCCUPIED", "MAINTENANCE"
 }
 
-model tenants { //add when rented or paid rent if possible
-  id            Int       @id
-  name          String    
-  phone         String
-  email         String
+model tenants {
+  id            Int         @id @default(autoincrement())
+  fullName      String    
+  phoneNumber   String      @unique
+  email         String      @unique
+  unitId        Int
 }

@@ -7,4 +7,4 @@ import { PropertiesService } from './properties.service';
   providers: [PropertiesService],
   exports: [PropertiesService],
 })
-export class UsersModule {}
+export class PropertiesModule {}

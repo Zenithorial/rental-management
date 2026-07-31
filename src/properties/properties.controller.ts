@@ -25,8 +25,8 @@ import { PropertiesService } from './properties.service';
 export class PropertiesController {
   constructor(private readonly propertiesService: PropertiesService) {}
 
-  // GET /properties/my-properties
-  @Get('my-properties')
+  // GET /properties
+  @Get()
   @Roles('OWNER', 'ADMIN', 'MANAGER')
   findAll(@Req() req: any) {
     const userId = req.user.sub;
@@ -45,7 +45,7 @@ export class PropertiesController {
     );
   }
 
-  @Post('add-property')
+  @Post()
   @Roles('ADMIN', 'OWNER')
   addProperty(
     @Body(new ValidationPipe()) addPropertyDto: AddPropertyDto,
@@ -98,11 +98,11 @@ export class PropertiesController {
 
   // DELETE /properties/:id
   @Delete(':id')
-  @Roles('ADMIN')
+  @Roles('ADMIN', 'OWNER')
   @HttpCode(HttpStatus.NO_CONTENT)
   removeUser(@Param('id', ParseIntPipe) propertyId: number, @Req() req: any) {
     const userId = req.user.sub;
     const userRole = req.user.role;
-    return this.propertiesService.deleteProperty(propertyId, userRole);
+    return this.propertiesService.deleteProperty(propertyId, userId, userRole);
   }
 }
