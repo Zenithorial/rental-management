@@ -32,7 +32,7 @@ export class UsersService {
     });
 
     if (!user) {
-      throw new NotFoundException('User Not Found!');
+      throw new NotFoundException(`User ID ${id} not found!`);
     }
 
     return user;
@@ -46,7 +46,7 @@ export class UsersService {
       });
     } catch (error) {
       if (error == 'P2025') {
-        throw new NotFoundException('User ${id} not found!');
+        throw new NotFoundException('User not found!');
       }
       throw error;
     }
@@ -94,7 +94,7 @@ export class UsersService {
       });
     } catch (error: any) {
       if (error == 'P2025') {
-        throw new NotFoundException('User ${id} not found!');
+        throw new NotFoundException(`User ID ${id} not found!`);
       }
       throw error;
     }
@@ -107,7 +107,7 @@ export class UsersService {
       });
     } catch (error: any) {
       if (error == 'P2025') {
-        throw new NotFoundException('User ${id} not found!');
+        throw new NotFoundException(`User ID ${id} not found!`);
       }
       throw error;
     }

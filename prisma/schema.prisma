@@ -12,7 +12,7 @@ datasource db {
 }
 
 model user {
-  id        Int       @id @default(1)
+  id        Int       @id @default(autoincrement())
   name      String
   email     String    @unique
   password  String
@@ -20,15 +20,16 @@ model user {
 }
 
 model properties {
-  id        Int       @id
-  name      String  
-  location  String
+  id        Int       @id @default(autoincrement())
+  name      String          // Dude Apartment
+  address   String          // 123 Rizal st.
   ownerId   Int       
 }
 
 model units {
-  unitNo        Int       @id
-  monthlyRent   Int
+  unitNo        Int       @id   //Unit 101
+  propertyId    Int             //123242342135234
+  monthlyRent   Int             //1,000,000,000,00,000,0,0,0,0,0,0,0
   status        Boolean
 }
 
