@@ -14,10 +14,20 @@ export class PropertiesService {
   constructor(private readonly prisma: PrismaService) {}
 
   //finds all properties that are owned by their owner
-  async findAllProperties(ownerId: number): Promise<properties[]> {
-    return await this.prisma.properties.findMany({
-      where: { ownerId: ownerId },
-      //include: {units: true} if we plan to include units in the properties
+  async findAllProperties(userId: number, userRole: string) {
+    //admin can fetch every property
+    if (userRole === 'ADMIN') {
+      return this.prisma.properties.findMany({
+        // include: { units: true },
+      });
+    }
+
+    //owner and managers can only get properties under their leadership
+    return this.prisma.properties.findMany({
+      where: {
+        OR: [{ ownerId: userId }, { managerId: userId }],
+      },
+      // include: { units: true },
     });
   }
 
@@ -32,7 +42,11 @@ export class PropertiesService {
     }
 
     // check if user is eligible to check the property
-    if (userRole !== 'ADMIN' && property.ownerId !== userId) {
+    if (
+      userRole !== 'ADMIN' &&
+      property.ownerId !== userId &&
+      property.managerId !== userId
+    ) {
       throw new ForbiddenException('You do not have access to this property');
     }
 
@@ -86,12 +100,26 @@ export class PropertiesService {
     }
   }
 
-  async deleteProperty(propertyId: number, userId: number, userRole: string) {
-    //checking is property can be modified by user
-    await this.findPropertyById(propertyId, userId, userRole);
+  //transfers property manager (admin and owner)
+  async transferPropertyManagement(propertyId: number, newManagerId: number) {
+    try {
+      return await this.prisma.properties.update({
+        where: { id: propertyId },
+        data: { managerId: newManagerId },
+      });
+    } catch (error: any) {
+      if (error.code === 'P2025') {
+        throw new NotFoundException(`Property ID ${propertyId} not found!`);
+      }
+      throw error;
+    }
+  }
 
-    return this.prisma.properties.delete({
-      where: { id: propertyId },
-    });
+  async deleteProperty(propertyId: number, userRole: string) {
+    if (userRole === 'ADMIN') {
+      return this.prisma.properties.delete({
+        where: { id: propertyId },
+      });
+    }
   }
 }

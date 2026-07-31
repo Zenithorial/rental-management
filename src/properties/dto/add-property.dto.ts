@@ -12,4 +12,8 @@ export class AddPropertyDto {
   @IsNumber()
   @IsNotEmpty()
   ownerId!: number;
+
+  @IsNumber()
+  @IsNotEmpty()
+  managerId!: number;
 }

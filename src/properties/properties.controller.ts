@@ -27,10 +27,11 @@ export class PropertiesController {
 
   // GET /properties/my-properties
   @Get('my-properties')
-  @Roles('OWNER', 'ADMIN')
+  @Roles('OWNER', 'ADMIN', 'MANAGER')
   findAll(@Req() req: any) {
-    const ownerId = req.user.sub;
-    return this.propertiesService.findAllProperties(ownerId);
+    const userId = req.user.sub;
+    const userRole = req.user.role;
+    return this.propertiesService.findAllProperties(userId, userRole);
   }
 
   @Get(':id') // grabs a property thru a specific id
@@ -44,8 +45,7 @@ export class PropertiesController {
     );
   }
 
-  // POST /users
-  @Post()
+  @Post('add-property')
   @Roles('ADMIN', 'OWNER')
   addProperty(
     @Body(new ValidationPipe()) addPropertyDto: AddPropertyDto,
@@ -56,7 +56,7 @@ export class PropertiesController {
   }
 
   @Put(':id')
-  @Roles('ADMIN', 'OWNER')
+  @Roles('ADMIN', 'OWNER', 'ADMIN')
   updateProperty(
     @Param('id', ParseIntPipe) propertyId: number,
     @Req() req: any,
@@ -84,6 +84,18 @@ export class PropertiesController {
     );
   }
 
+  @Put(':id/transfer-management')
+  @Roles('ADMIN', 'OWNER')
+  transferManagement(
+    @Param('id', ParseIntPipe) propertyId: number,
+    @Body('newManagerId', ParseIntPipe) newManagerId: number,
+  ) {
+    return this.propertiesService.transferPropertyManagement(
+      propertyId,
+      newManagerId,
+    );
+  }
+
   // DELETE /properties/:id
   @Delete(':id')
   @Roles('ADMIN')
@@ -91,6 +103,6 @@ export class PropertiesController {
   removeUser(@Param('id', ParseIntPipe) propertyId: number, @Req() req: any) {
     const userId = req.user.sub;
     const userRole = req.user.role;
-    return this.propertiesService.deleteProperty(propertyId, userId, userRole);
+    return this.propertiesService.deleteProperty(propertyId, userRole);
   }
 }

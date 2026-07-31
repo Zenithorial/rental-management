@@ -24,6 +24,7 @@ model properties {
   name      String          // Dude Apartment
   address   String          // 123 Rizal st.
   ownerId   Int       
+  managerId Int
 }
 
 model units {
