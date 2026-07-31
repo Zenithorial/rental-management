@@ -5,6 +5,7 @@ import {
   ParseIntPipe,
   Post,
   Body,
+  Req,
   Put,
   Delete,
   HttpCode,
@@ -31,8 +32,16 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
+  @Get('me')
+  getSelfInfo(@Req() req) {
+    const userId = req.user.sub;
+
+    return this.usersService.findUserByID(userId);
+  }
+
   // GET /users/:id
   @Get(':id')
+  @Roles('ADMIN')
   findUser(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.findUserByID(id);
   }
@@ -44,8 +53,18 @@ export class UsersController {
     return this.usersService.createUser(createUserDto);
   }
 
+  @Put('edit')
+  updateSelf(
+    @Req() req: any,
+    @Body(new ValidationPipe()) updateUserDto: UpdateUserDto,
+  ) {
+    const userId = req.user.sub;
+    return this.usersService.updateUser(userId, updateUserDto);
+  }
+
   // PUT /users/:id
   @Put(':id')
+  @Roles('ADMIN')
   updateUser(
     @Param('id', ParseIntPipe) id: number,
     @Body(new ValidationPipe()) updateUserDto: UpdateUserDto,

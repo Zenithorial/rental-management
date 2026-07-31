@@ -6,10 +6,6 @@ import {
 } from 'class-validator';
 
 export class UpdateUserDto {
-  @IsString()
-  @IsOptional()
-  name?: string;
-
   @IsEmail()
   @IsOptional()
   email?: string;
@@ -18,8 +14,4 @@ export class UpdateUserDto {
   @IsString()
   @IsOptional()
   password?: string;
-
-  @IsString()
-  @IsOptional()
-  role?: string;
 }

@@ -12,7 +12,7 @@ datasource db {
 }
 
 model user {
-  id        Int       @id @default(autoincrement()) //change to uuid in the future
+  id        Int       @id @default(1)
   name      String
   email     String    @unique
   password  String
